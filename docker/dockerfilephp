@@ -1,0 +1,209 @@
+FROM php:8.0-fpm
+
+# Set defaults for variables used by run.sh
+ENV COMPOSER_HOME=/root/.composer
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        libmemcached-dev \
+        libz-dev \
+        libpq-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libfreetype6-dev \
+        libssl-dev \
+        libzip-dev \
+        unzip \
+        openssh-client \
+        gnupg2 \
+        git \
+        libmcrypt-dev
+
+# Install the PHP mcrypt extention
+#RUN pecl install mcrypt-1.0.2
+#RUN docker-php-ext-install mcrypt
+
+# Install the PHP pdo_mysql extention
+RUN docker-php-ext-install pdo_mysql
+
+# Install the PHP pdo_pgsql extention
+RUN docker-php-ext-install pdo_pgsql
+
+#####################################
+# gd:
+#####################################
+
+# Install the PHP gd library
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg && \
+    docker-php-ext-install gd
+
+#
+#--------------------------------------------------------------------------
+# Mandatory Software's Installation
+#--------------------------------------------------------------------------
+#
+# Mandatory Software's such as ("mcrypt", "pdo_mysql", "libssl-dev", ....)
+# are installed on the base image 'laradock/php-fpm' image. If you want
+# to add more Software's or remove existing one, you need to edit the
+# base image (https://github.com/LaraDock/php-fpm).
+#
+
+#
+#--------------------------------------------------------------------------
+# Optional Software's Installation
+#--------------------------------------------------------------------------
+#
+# Optional Software's will only be installed if you set them to `true`
+# in the `docker-compose.yml` before the build.
+# Example:
+#   - INSTALL_ZIP_ARCHIVE=true
+#   - ...
+#
+
+#####################################
+# SOAP:
+#####################################
+
+ARG INSTALL_SOAP=true
+RUN if [ ${INSTALL_SOAP} = true ]; then \
+    # Install the soap extension
+    apt-get -y update && \
+    apt-get -y install libxml2-dev && \
+    docker-php-ext-install soap \
+;fi
+
+#####################################
+# xDebug:
+#####################################
+
+ARG INSTALL_XDEBUG=true
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    # Install the xdebug extension
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug \
+;fi
+
+#####################################
+# PHP REDIS EXTENSION FOR PHP 7.*
+#####################################
+ARG INSTALL_PHPREDIS=true
+RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
+    # Install Php Redis Extension
+    pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis \
+;fi
+
+# Copy xdebug configration for remote debugging
+#COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+#####################################
+# ZipArchive:
+#####################################
+
+ARG INSTALL_ZIP_ARCHIVE=true
+RUN if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
+    # Install the zip extension
+    pecl install zip && \
+    docker-php-ext-enable zip \
+;fi
+
+#####################################
+# bcmath:
+#####################################
+
+ARG INSTALL_BCMATH=true
+RUN if [ ${INSTALL_BCMATH} = true ]; then \
+    # Install the bcmath extension
+    docker-php-ext-install bcmath \
+;fi
+
+#####################################
+# PHP Memcached:
+#####################################
+
+ARG INSTALL_MEMCACHED=false
+RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
+    # Install the php memcached extension
+    curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz" \
+    && mkdir -p memcached \
+    && tar -C memcached -zxvf /tmp/memcached.tar.gz --strip 1 \
+    && ( \
+        cd memcached \
+        && phpize \
+        && ./configure \
+        && make -j$(nproc) \
+        && make install \
+    ) \
+    && rm -r memcached \
+    && rm /tmp/memcached.tar.gz \
+    && docker-php-ext-enable memcached \
+;fi
+
+#####################################
+# Exif:
+#####################################
+
+ARG INSTALL_EXIF=false
+RUN if [ ${INSTALL_EXIF} = true ]; then \
+    # Enable Exif PHP extentions requirements
+    docker-php-ext-install exif && \
+    docker-php-ext-enable exif \
+;fi
+
+##########
+# Create Composer directory (cache and auth files) & Get Composer
+##########
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+#####################################
+# Opcache:
+#####################################
+ARG INSTALL_OPCACHE=true
+RUN if [ ${INSTALL_OPCACHE} = true ]; then \
+    docker-php-ext-install opcache && \
+    docker-php-ext-enable opcache \
+;fi
+
+# Copy opcache configration
+#COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y yarn
+
+#
+#--------------------------------------------------------------------------
+# Final Touch
+#--------------------------------------------------------------------------
+#
+
+
+#ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
+
+RUN rm -r /var/lib/apt/lists/*
+
+ADD ./php.ini /tmp/php.ini
+RUN mv "/tmp/php.ini" "$PHP_INI_DIR/php.ini"
+
+RUN groupmod -g 1000 www-data
+RUN groupmod -g 1001 www-data
+
+RUN usermod -u 1000 www-data
+
+RUN mkdir /var/www/.ssh && \
+    mkdir /var/www/.composer && \
+    mkdir /var/www/.composer/cache
+
+RUN chown -R www-data:www-data /var/www
+
+ENV COMPOSER_HOME=/var/www/.composer
+
+WORKDIR /usr/share/nginx/html
+
+CMD ["php-fpm"]
+
+EXPOSE 9000

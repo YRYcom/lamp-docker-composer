@@ -1,0 +1,49 @@
+version: '3'
+services:
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION}
+    container_name: ${LAMP_DOCKER_NAME}_mariadb
+    volumes:
+      - ../mysql:/var/lib/mysql
+    ports:
+      - "${MARIADB_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MARIADB_DATABASE_PASSWORD}
+      - MYSQL_USER=${MARIADB_DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${MARIADB_DATABASE_NAME}
+    restart: always
+
+  phpmyadmin:
+    depends_on:
+      - mariadb
+    image: phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}
+    container_name: ${LAMP_DOCKER_NAME}_phpmyadmin
+    restart: always
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  nginx:
+    image: nginx:${NGINX_VERSION}
+    container_name: ${LAMP_DOCKER_NAME}_nginx
+    volumes:
+      - "../:/usr/share/nginx/html"
+      - "../log:/var/log/nginx"
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - "${NGINX_PORT}:80"
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: .
+      dockerfile: dockerfilephp
+    container_name: ${LAMP_DOCKER_NAME}_php
+    volumes:
+      - "../:/usr/share/nginx/html"
+      - "./php.ini:/usr/local/etc/php/php.ini"
