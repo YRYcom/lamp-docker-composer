@@ -11,7 +11,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${MARIADB_DATABASE_PASSWORD}
       - MYSQL_USER=${MARIADB_DATABASE_USER}
-      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_PASSWORD=${MARIADB_DATABASE_PASSWORD}
       - MYSQL_DATABASE=${MARIADB_DATABASE_NAME}
     restart: always
 
@@ -25,7 +25,7 @@ services:
       - "${PHPMYADMIN_PORT}:80"
     environment:
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_DATABASE_PASSWORD}
 
   nginx:
     image: nginx:${NGINX_VERSION}
@@ -47,3 +47,12 @@ services:
     volumes:
       - "../:/usr/share/nginx/html"
       - "./php.ini:/usr/local/etc/php/php.ini"
+
+  wiremock:
+    image: rodolpheche/wiremock:${WIREMOCK_VERSION}
+    container_name: ${LAMP_DOCKER_NAME}_wiremock
+    command: --port 8080
+    ports:
+      - "${WIREMOCK_PORT}:8080"
+    volumes:
+      - ../wiremock:/home/wiremock
