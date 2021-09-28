@@ -13,16 +13,20 @@ endif
 
 help:             ##Afficher l'aide sur le fichier
 	@cat Makefile | grep "##." | sed '2d;s/##//;s/://'
+init:
+	@cp .env.default .env
 start:            ##Démarrer l'instance Docker
 	@sudo docker-compose --env-file .env -f ./docker/docker-compose.yml up -d --force-recreate
 build-docker:     ##Build l'instance Docker
 	@sudo docker-compose -f ./docker/docker-compose.yml up --build
 stop:             ##Arreter l'instance Docker
-	@sudo docker-compose -f ./docker/docker-compose.yml down
+	@sudo docker-compose -f ./docker/docker-compose.yml down --remove-orphans
 exec:             ##Bash sur l'instance docker php
 	@sudo docker exec -it --user www-data "$(LAMP_DOCKER_NAME)_php" bash
 composer:         ##Installation des composants et librairies php du projet : install, update [package_name], clearcache, dumpautoload
 	@sudo docker exec -it --user www-data "$(LAMP_DOCKER_NAME)_php" bash -c "sh ./docker/init-ssh.sh && sh ./docker/composer.sh $(COMMAND_ARGS)"
+restart-wiremock: ##Redémarre le container wiremock
+	@sudo docker restart "$(LAMP_DOCKER_NAME)_wiremock"
 yarn:             ##Compiler les assets, options : install, build, dev
 	@sudo docker exec -it --user www-data "$(LAMP_DOCKER_NAME)_php" bash -c "sh ./docker/init-ssh.sh && yarn $(COMMAND_ARGS)"
 create-laravel:   ##Initialisation projet laravel
