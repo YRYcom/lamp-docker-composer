@@ -184,6 +184,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('operation') }}" class="nav-link">
+                            <i class="nav-icon fas fa-dollar-sign"></i>
+                            <p>
+                                Opération
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
                             <i class="nav-icon fas fa-sign-out-alt"></i>
                             <p>
