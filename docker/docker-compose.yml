@@ -56,3 +56,10 @@ services:
       - "${WIREMOCK_PORT}:8080"
     volumes:
       - ../wiremock:/home/wiremock
+
+  smtp:
+    container_name: ${LAMP_DOCKER_NAME}_smtp
+    image: sj26/mailcatcher
+    ports:
+      - "${SMTP_HTTP}:1080"
+      - "${SMTP_IP}:1025"
