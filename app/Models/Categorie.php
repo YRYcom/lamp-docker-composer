@@ -12,5 +12,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Categorie extends Model
 {
-
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'designation' => $this->designation,
+        ];
+    }
 }

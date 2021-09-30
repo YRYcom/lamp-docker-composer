@@ -16,10 +16,10 @@ class CreateOperationAndCategorie extends Migration
         Schema::create('operations', function (Blueprint $table) {
             $table->id();
             $table->string('designation');
-            $table->float('credit')->nullable();
-            $table->float('debit')->nullable();
+            $table->float('credit')->nullable()->default(0);
+            $table->float('debit')->nullable()->default(0);
             $table->string('date_realisation')->nullable();
-            $table->integer('realisation')->default(0);
+            $table->integer('pointe')->default(0);
             $table->integer('numero_ordre');
             $table->integer('categorie_id');
             $table->integer('user_id');

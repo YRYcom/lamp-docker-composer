@@ -4,9 +4,9 @@
 <div class="wrapper">
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light  d-none">
         <!-- Left navbar links -->
-        <ul class="navbar-nav">
+        <ul class="navbar-nav d-none">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
@@ -19,7 +19,7 @@
         </ul>
 
         <!-- SEARCH FORM -->
-        <form class="form-inline ml-3">
+        <form class="form-inline ml-3 d-none">
             <div class="input-group input-group-sm">
                 <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
@@ -31,7 +31,7 @@
         </form>
 
         <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto d-none">
             <!-- Messages Dropdown Menu -->
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
@@ -128,64 +128,27 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="index3.html" class="brand-link">
-            <img src="/adminlte/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                 style="opacity: .8">
-            <span class="brand-text font-weight-light">AdminLTE 3</span>
+        <a href="/app" class="brand-link pl-3">
+            <i class="nav-icon fas fa-dollar-sign"></i>
+            <span class="brand-text font-weight">TRESORERIE</span>
         </a>
 
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                <div class="image">
-                    <img src="/adminlte/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                </div>
                 <div class="info">
-                    <a href="#" class="d-block">Alexander Pierce</a>
+                    <i class="nav-icon fas fa-user mr-2"></i>
+                    {{ auth()->user()->name }}
                 </div>
             </div>
 
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
-                    <li class="nav-item has-treeview menu-open">
-                        <a href="#" class="nav-link active">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                Starter Pages
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Active Page</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Inactive Page</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Simple Link
-                                <span class="right badge badge-danger">New</span>
-                            </p>
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a href="{{ route('operation') }}" class="nav-link">
-                            <i class="nav-icon fas fa-dollar-sign"></i>
+                            <i class="nav-icon fas fa-list"></i>
                             <p>
                                 Opération
                             </p>
@@ -213,12 +176,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Starter Page</h1>
+                        <h1 class="m-0 text-dark">@yield('titleName', 'TitleName')</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Starter Page</li>
+                            <li class="breadcrumb-item"><a href="/app">Trésorerie</a></li>
+                            <li class="breadcrumb-item active">@yield('titleName', 'TitleName')</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -229,6 +192,18 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
+                @if (Session::has('SuccessAlert'))
+                <div class="alert alert-success alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ Session::get('SuccessAlert') }}
+                </div>
+                @endif
+                    @if (Session::has('DangerAlert'))
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            {{ Session::get('DangerAlert') }}
+                        </div>
+                    @endif
                 @yield('main')
             </div><!-- /.container-fluid -->
         </div>
@@ -236,24 +211,15 @@
     </div>
     <!-- /.content-wrapper -->
 
-    <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark">
-        <!-- Control sidebar content goes here -->
-        <div class="p-3">
-            <h5>Title</h5>
-            <p>Sidebar content</p>
-        </div>
-    </aside>
-    <!-- /.control-sidebar -->
 
     <!-- Main Footer -->
     <footer class="main-footer">
         <!-- To the right -->
         <div class="float-right d-none d-sm-inline">
-            Anything you want
+            &nbsp;
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2006-{{ date('Y') }} <a href="https://adminlte.io">YRYcom</a>.</strong> Tous droits réservés
     </footer>
 </div>
 <!-- ./wrapper -->
