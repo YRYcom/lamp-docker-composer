@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class OperationExport
  * @property int $id
+ * @property int $compte_bancaire_id
  * @property string $designation
  * @property integer $nombre_operation
  * @property integer $nombre_fichier
@@ -18,6 +19,7 @@ class OperationExport extends Model
 
     protected $fillable = [
         'designation',
-        'created_by'
+        'created_by',
+        'compte_bancaire_id',
     ];
 }

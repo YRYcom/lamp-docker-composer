@@ -20,6 +20,7 @@ class CreateOperationExport extends Migration
         Schema::create('operation_exports', function (Blueprint $table) {
             $table->id();
             $table->string('designation');
+            $table->integer('compte_bancaire_id');
             $table->integer('nombre_operation')->default(0);
             $table->integer('nombre_fichier')->default(0);
             $table->integer('created_by');

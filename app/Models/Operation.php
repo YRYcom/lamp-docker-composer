@@ -6,6 +6,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Operation
@@ -66,6 +67,12 @@ class Operation extends Model
     public function compteBancaire(): BelongsTo
     {
         return $this->belongsTo(CompteBancaire::class);
+    }
+
+
+    public function documents()
+    {
+        return $this->hasMany(DocumentOperation::class);
     }
 
     protected $casts = [

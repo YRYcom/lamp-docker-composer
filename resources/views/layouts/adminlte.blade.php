@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/adminlte/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/adminlte/css/adminlte.min.css">
+    <link rel="stylesheet" href="/adminlte/plugins/toastr/toastr.min.css">
     <meta name="csrf-token" content="{{csrf_token()}}" />
 
     <style>
@@ -28,12 +29,10 @@
 
 <!-- REQUIRED SCRIPTS -->
 
-<!-- jQuery -->
 <script src="/adminlte/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
 <script src="/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
 <script src="/adminlte/js/adminlte.min.js"></script>
+<script src="/adminlte/plugins/toastr/toastr.min.js"></script>
 @yield('js')
 </body>
 </html>

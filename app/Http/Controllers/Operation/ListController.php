@@ -49,6 +49,15 @@ class ListController extends Controller
                 break;
         }
 
+        switch($request->input('exporter','tous')) {
+            case 'oui':
+                $requestOperation->whereNotNull('operation_export_id');
+                break;
+            case 'non':
+                $requestOperation->whereNull('operation_export_id');
+                break;
+        }
+
         return Datatables::of($requestOperation->latest()->get())
             ->rawColumns(['action'])
             ->make(true);

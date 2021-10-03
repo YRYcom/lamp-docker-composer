@@ -12,6 +12,7 @@ use App\Http\Controllers\Operation\ListController;
 use App\Http\Controllers\Operation\SaveController;
 use App\Http\Controllers\Operation\UpdateController;
 use App\Http\Controllers\OperationExport\CreateController as OperationExportCreateController;
+use App\Http\Controllers\OperationExport\DownloadController as OperationExportDownloadController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,5 +34,6 @@ Route::get('documentoperation/telecharger', DownloadController::class)->name('do
 Route::get('documentoperation/liste', DocumentOperationListController::class)->name('documentoperation.liste');
 
 Route::get('operationexport/creer', OperationExportCreateController::class)->name('operationexport.creer');
+Route::get('operationexport/telecharger', OperationExportDownloadController::class)->name('operationexport.telecharger');
 
 

@@ -177,6 +177,7 @@ return [
 
         App\Providers\FortifyServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
+        App\Providers\ResponseMacroServiceProvider::class,
 
     ],
 
