@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/adminlte/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/adminlte/css/adminlte.min.css">
+    <meta name="csrf-token" content="{{csrf_token()}}" />
 
     <style>
         .tresorerie .sidebar .user-panel .info {

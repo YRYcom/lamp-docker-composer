@@ -20,7 +20,6 @@ class CreateOperationAndCategorie extends Migration
             $table->float('debit')->nullable()->default(0);
             $table->string('date_realisation')->nullable();
             $table->integer('pointe')->default(0);
-            $table->integer('numero_ordre');
             $table->integer('categorie_id');
             $table->integer('user_id');
             $table->timestamps();

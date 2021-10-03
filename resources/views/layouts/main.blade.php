@@ -147,14 +147,6 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <li class="nav-item">
-                        <a href="{{ route('operation') }}" class="nav-link">
-                            <i class="nav-icon fas fa-list"></i>
-                            <p>
-                                Opération
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
                             <i class="nav-icon fas fa-sign-out-alt"></i>
                             <p>
@@ -163,6 +155,29 @@
                         </a>
                     </li>
                 </ul>
+                @foreach(auth()->user()->entreprises as $entreprise)
+                    <!-- Sidebar user panel (optional) -->
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                        <div class="info">
+                            <i class="nav-icon fas fa-building mr-2"></i>
+                            {{ $entreprise->designation }}
+                        </div>
+                    </div>
+                    <nav class="mt-2">
+                        @foreach(auth()->user()->compteBancaires->where('entreprise_id', $entreprise->id) as $compteBancaire)
+                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                            <li class="nav-item">
+                                <a href="{{ route('operation', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <p>
+                                        {{$compteBancaire->designation}}
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                        @endforeach
+                    </nav>
+                @endforeach
             </nav>
             <!-- /.sidebar-menu -->
         </div>

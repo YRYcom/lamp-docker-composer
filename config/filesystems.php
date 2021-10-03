@@ -30,6 +30,21 @@ return [
 
     'disks' => [
 
+        'documentoperation' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/documentoperation'),
+        ],
+
+        'operationexport' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/operationexport'),
+        ],
+
+        'tmp' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/tmp'),
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

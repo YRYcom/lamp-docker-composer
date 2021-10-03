@@ -3,15 +3,19 @@
 @section('titleName', 'Opération - Ajouter')
 
 @section('main')
-    <form action="{{ route('operation.enregistrer') }}" method="POST">
-        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}"
-        @csrf
+
     <section class="content">
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
 
                     <div class="card-body">
+                        <form action="{{ route('operation.enregistrer') }}" method="POST" id="formCreate">
+                            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                            <input type="hidden" name="compte_bancaire_id" value="{{ $compteBancaire->id }}">
+                            <input type="hidden" id="documentoperations_id" name="documentoperations_id" value="{{ json_encode([]) }}">
+                            @csrf
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -55,19 +59,113 @@
                                 </div>
                             </div>
                         </div>
+        </form>
+                        <div class="form-group">
+                            <label for="designation">Fichiers</label>
+                            <div class="dropzone" id="file-dropzone"></div>
+                        </div>
 
                     </div>
                     <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
+
             </div>
 
         </div>
         <div class="row">
             <div class="col-12">
                 <a href="{{ route('operation') }}" class="btn btn-secondary">Annuler</a>
-                <input type="submit" value="Ajouter" class="btn btn-success float-right">
+                <input type="submit" value="Ajouter" class="ajouter btn btn-success float-right">
             </div>
         </div>
+
+
     </section>
+
+
+@endsection
+
+@section('css')
+    <link rel="stylesheet" href="/adminlte/plugins/dropzone/min/dropzone.min.css">
+    <link rel="stylesheet" href="/adminlte/plugins/dropzone/min/basic.min.css">
+
+@endsection
+
+@section('js')
+    <script src="/adminlte/plugins/dropzone/min/dropzone.min.js"></script>
+
+    <script type="text/javascript">
+        Dropzone.autoDiscover = false;
+        $(document).ready(function() {
+
+            let urlTelecharger = "{{ route('documentoperation.telecharger', ['id' => 'idDocument']) }}";
+
+            $('.ajouter').on('click', function(e) {
+                $('#formCreate').submit();
+            });
+
+            function removeA(arr) {
+                var what, a = arguments, L = a.length, ax;
+                while (L > 1 && arr.length) {
+                    what = a[--L];
+                    while ((ax= arr.indexOf(what)) !== -1) {
+                        arr.splice(ax, 1);
+                    }
+                }
+                return arr;
+            }
+
+            $('#file-dropzone').dropzone({
+                uploadMultiple: false,
+                parallelUploads: 1,
+                url: '{{route('documentoperation.enregistrer')}}',
+                acceptedFiles: ".jpeg,.jpg,.png,.gif,.pdf,.xls,.xlsx",
+                addRemoveLinks: true,
+                maxFilesize: 8,
+                dictDefaultMessage: "Déplacer votre fichier ici ou cliquer pour le téléverser.",
+                dictRemoveFile: 'Supprimer',
+                dictFileTooBig: 'Le fichier est trop volumineux',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                removedfile: function (file) {
+                    var name = file.upload.filename;
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{route('documentoperation.supprimer')}}',
+                        data: {"_token": "{{ csrf_token() }}",  id: file.serverId},
+                        success: function (response) {
+                            let ids = JSON.parse($('#documentoperations_id').val());
+                            removeA(ids, response.id);
+                            $('#documentoperations_id').val(JSON.stringify(ids));
+                        }
+                    });
+                    var fileRef;
+                    return (fileRef = file.previewElement) != null ?
+                        fileRef.parentNode.removeChild(file.previewElement) : void 0;
+                },
+                error: function(file, message, xhr) {
+                    $(file.previewElement).remove();
+                },
+                success: function (file, response) {
+                    let ids = JSON.parse($('#documentoperations_id').val());
+                    ids.push(response.id);
+                    $('#documentoperations_id').val(JSON.stringify(ids));
+                    file.serverId = response.id;
+                    $(".dz-preview:last-child").attr('data-id' ,response.id);
+                    if(response != 0){
+                        // Download link
+                        var anchorEl = document.createElement('a');
+                        anchorEl.setAttribute('class','dz-remove');
+                        anchorEl.setAttribute('href',urlTelecharger.replace('idDocument', response.id));
+                        anchorEl.setAttribute('target','_blank');
+                        anchorEl.innerHTML = "Télécharger";
+                        file.previewTemplate.appendChild(anchorEl);
+                    }
+
+                },
+            });
+        });
+    </script>
 @endsection

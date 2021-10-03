@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titleName', 'Opération')
+@section('titleName',  $compteBancaire->entreprise->designation . ' - Compte bancaire  : ' . $compteBancaire->designation  )
 
 @section('css')
     <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -9,15 +9,50 @@
 @section('main')
 
     <section class="content">
+        <div class="card ">
+            <div class="card-body">
+                Le solde en banque est de {{ number_format($compteBancaire->solde() ,2, '.', ' ') }} €
+            </div>
+        </div>
 
-    <div class="card card-outline">
+    <div class="card">
         <div class="card-header">
             Liste des opérations
             <div class="card-tools">
-                <a href="{{ route('operation.creer') }}" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Ajouter</a>
+                <a href="{{ route('operation.creer', ['compte_bancaire_id' => $compteBancaire->id]) }}" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Ajouter</a>
             </div>
         </div>
         <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 offset-md-3">
+                    <div class="form-group row">
+                        <label for="avec_piece" class="col-sm-8 col-form-label text-right">Avec pièce</label>
+                        <div class="col-sm-4">
+                        <select name="avec_piece" id="avec_piece" class="form-control  custom-select @error('categorie_id') is-invalid @enderror">
+                            <option>Tous</option>
+                            <option value="oui">Oui</option>
+                            <option value="nons">Non</option>
+                        </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group row">
+                        <label for="pointee" class="col-sm-8 col-form-label text-right">Pontée</label>
+                        <div class="col-sm-4">
+                        <select name="pointee" id="pointee" class="form-control  custom-select @error('categorie_id') is-invalid @enderror">
+                            <option>Tous</option>
+                            <option value="oui">Oui</option>
+                            <option value="non">Non</option>
+                        </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Actualiser" class="actualiser btn btn-primary float-right">
+                </div>
+            </div>
+
             <table class="table table-bordered operation-datatable">
                 <thead>
                 <tr>
@@ -74,6 +109,11 @@
                 $('#confirm-delete').modal();
             });
 
+            $('.actualiser').on('click',  function(e) {
+                let table = $('.operation-datatable').DataTable();
+                table.ajax.reload();
+            });
+
             $('.operation-datatable').on('click', '.edit', function(e) {
                 window.location.href = urlEditer.replace('idOperation', $(this).data('id'));
             });
@@ -81,7 +121,13 @@
             $('.operation-datatable').DataTable( {
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('operation.liste') }}",
+                ajax: {
+                    url: "{{ route('operation.liste', ['compte_bancaire_id' => $compteBancaire->id]) }}",
+                    data :function ( d ) {
+                        d.avec_piece= $('select[name="avec_piece"]').val();
+                        d.pointee= $('select[name="pointee"]').val();
+                    }
+                },
                 language: {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                 },
@@ -116,14 +162,15 @@
                     },
                     {
                         targets: 3,
+                        className: 'text-right',
                         render: function (data, type, row, meta) {
-                            return row.debit;
+                            return row.debit_tostring;
                         }
                     },
                     {
                         targets: 4,
                         render: function (data, type, row, meta) {
-                            return row.credit;
+                            return row.credit_tostring;
                         }
                     },
                     {

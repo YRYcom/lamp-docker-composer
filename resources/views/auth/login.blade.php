@@ -76,7 +76,7 @@
                 </p>
                 @endif
                 <p class="mb-0">
-                    <a href="register.html" class="text-center">Je m'enregistre</a>
+                    <a href="register" class="text-center">Je m'enregistre</a>
                 </p>
             </div>
             <!-- /.card-body -->

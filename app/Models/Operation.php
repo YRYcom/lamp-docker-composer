@@ -16,9 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $debit
  * @property DateTime $date_realisation
  * @property int $pointe
- * @property int $numero_ordre
  * @property int $categorie_id
+ * @property  int $compte_bancaire_id
  * @property-read Categorie $categorie
+ * @property-read CompteBancaire $compteBancaire
  */
 class Operation extends Model
 {
@@ -30,17 +31,21 @@ class Operation extends Model
         'designation',
         'credit',
         'debit',
+
         'user_id',
+        'compte_bancaire_id',
     ];
 
     public function toArray() {
         return [
             'id' => $this->id,
             'designation' => $this->designation,
+            'compte_bancaire' => $this->compteBancaire,
             'credit' => $this->credit,
             'debit' => $this->debit,
             'pointe' => $this->pointe,
-            'numero_ordre' => $this->numero_ordre,
+            'credit_tostring' => $this->credit == 0 ? '': number_format($this->credit ,2, '.', ' '),
+            'debit_tostring' => $this->debit == 0 ? '' : number_format($this->debit ,2, '.', ' '),
             'date_realisation' => $this->date_realisation?->format('d/m/Y'),
             'categorie' => $this->categorie,
             'categorie_id' => $this->categorie->id,
@@ -53,6 +58,14 @@ class Operation extends Model
     public function categorie(): BelongsTo
     {
         return $this->belongsTo(Categorie::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function compteBancaire(): BelongsTo
+    {
+        return $this->belongsTo(CompteBancaire::class);
     }
 
     protected $casts = [
