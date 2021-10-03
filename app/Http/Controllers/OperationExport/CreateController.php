@@ -17,6 +17,19 @@ class CreateController extends Controller
 {
     public function __invoke(Request $request)
     {
+        //operation pointé sans date
+        if(Operation::where('pointe', 1)->whereNull('operation_export_id')->whereNull('date_realisation')->count() > 0) {
+            return response()->jsonError('Des opérations sont sans date de réalisation, merci de corriger');
+        }
+
+        //operation pointé sans document
+        if(Operation::where('pointe', 1)->whereNull('operation_export_id')->whereNotIn('id', function($query){
+                $query->select('operation_id')
+                    ->from(with(new DocumentOperation())->getTable());
+            })->count() > 0) {
+            return response()->jsonError('Des opérations sont sans justificatif, merci de corriger');
+        }
+
         $compteBancaire = auth()->user()->compteBancaires->where('id', $request->input('compte_bancaire_id'))->first();
         if (!($compteBancaire instanceof CompteBancaire)) {
             return redirect(RouteServiceProvider::HOME);

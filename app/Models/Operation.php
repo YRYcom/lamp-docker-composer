@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Date;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $designation
  * @property float $credit
  * @property float $debit
- * @property DateTime $date_realisation
+ * @property Date $date_realisation
  * @property int $pointe
  * @property int $categorie_id
  * @property  int $compte_bancaire_id
@@ -47,7 +48,8 @@ class Operation extends Model
             'pointe' => $this->pointe,
             'credit_tostring' => $this->credit == 0 ? '': number_format($this->credit ,2, '.', ' '),
             'debit_tostring' => $this->debit == 0 ? '' : number_format($this->debit ,2, '.', ' '),
-            'date_realisation' => $this->date_realisation?->format('d/m/Y'),
+            'date_realisation' => $this->date_realisation?->format('Y-m-d'),
+            'date_realisation_tostring' => $this->date_realisation?->format('d/m/Y'),
             'categorie' => $this->categorie,
             'categorie_id' => $this->categorie->id,
         ];
@@ -69,14 +71,13 @@ class Operation extends Model
         return $this->belongsTo(CompteBancaire::class);
     }
 
-
     public function documents()
     {
         return $this->hasMany(DocumentOperation::class);
     }
 
     protected $casts = [
-        'date_realisation' => 'datetime',
+        'date_realisation' => 'date:Y-m-d',
         'pointe' => 'boolean',
     ];
 }

@@ -18,7 +18,7 @@ class CreateOperationAndCategorie extends Migration
             $table->string('designation');
             $table->float('credit')->nullable()->default(0);
             $table->float('debit')->nullable()->default(0);
-            $table->string('date_realisation')->nullable();
+            $table->date('date_realisation')->nullable();
             $table->integer('pointe')->default(0);
             $table->integer('categorie_id');
             $table->integer('user_id');

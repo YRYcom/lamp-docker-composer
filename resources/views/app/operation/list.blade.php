@@ -4,6 +4,11 @@
 
 @section('css')
     <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+    .badge.even-larger-badge {
+    font-size: 90%;
+    }
+    </style>
 @endsection
 
 @section('main')
@@ -70,7 +75,7 @@
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Pointé</th>
+                    <th>Date</th>
                     <th>Designation</th>
                     <th>Debit</th>
                     <th>Credit</th>
@@ -209,21 +214,20 @@
                     {
                         targets: 0,
                         render: function (data, type, row, meta) {
-                            return row.id;
+                            if(row.pointe){
+                                return `<span class="badge  even-larger-badge badge-success display-4">` + row.id + `</span>`;
+                            } else {
+                                return `<span class="badge  even-larger-badge badge-danger display-4"> ` + row.id + `</span>`;
+                            }
                         },
                     },
                     {
                         targets: 1,
                         render: function (data, type, row, meta) {
                             if(row.date_realisation === null) {
-                                row.date_realisation_tostring = '';
+                                return '-';
                             } else {
-                                row.date_realisation_tostring = ' - ' +row.date_realisation;
-                            }
-                            if(row.pointe){
-                                return `<span class="badge badge-success">Oui` + row.date_realisation_tostring + `</span>`;
-                            } else {
-                                return `<span class="badge badge-danger"> Non` + row.date_realisation_tostring + `</span>`;
+                                return row.date_realisation_tostring;
                             }
                         }
                     },
