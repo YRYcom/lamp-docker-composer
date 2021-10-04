@@ -95,6 +95,12 @@
                                         {{$compteBancaire->designation}}
                                     </p>
                                 </a>
+                                <a href="{{ route('rapport.tresorerie', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <p>
+                                        Trésorerie
+                                    </p>
+                                </a>
                             </li>
                         </ul>
                         @endforeach

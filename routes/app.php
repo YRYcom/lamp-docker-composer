@@ -13,6 +13,7 @@ use App\Http\Controllers\Operation\SaveController;
 use App\Http\Controllers\Operation\UpdateController;
 use App\Http\Controllers\OperationExport\CreateController as OperationExportCreateController;
 use App\Http\Controllers\OperationExport\DownloadController as OperationExportDownloadController;
+use App\Http\Controllers\Rapport\TresorerieController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,5 +36,8 @@ Route::get('documentoperation/liste', DocumentOperationListController::class)->n
 
 Route::get('operationexport/creer', OperationExportCreateController::class)->name('operationexport.creer');
 Route::get('operationexport/telecharger', OperationExportDownloadController::class)->name('operationexport.telecharger');
+
+Route::get('rapport/tresorerie', TresorerieController::class)->name('rapport.tresorerie');
+
 
 
