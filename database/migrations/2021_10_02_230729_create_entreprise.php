@@ -52,14 +52,7 @@ class CreateEntreprise extends Migration
             $table->timestamps();
         });
 
-        Schema::create('solde_compte_bancaires', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('$ate_arret');
-            $table->integer('montant');
-            $table->integer('created_by');
-            $table->integer('updated_by')->nullable();
-            $table->timestamps();
-        });
+
     }
 
     /**
@@ -73,7 +66,7 @@ class CreateEntreprise extends Migration
         Schema::dropIfExists('compte_bancaires');
         Schema::dropIfExists('entreprise_user');
         Schema::dropIfExists('compte_bancaire_user');
-        Schema::dropIfExists('solde_compte_bancaires');
+
     }
 }
 
