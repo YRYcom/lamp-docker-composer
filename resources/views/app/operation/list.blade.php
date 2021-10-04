@@ -81,7 +81,7 @@
                     <th>Credit</th>
                     <th>Catégorie</th>
                     <th>Pièce</th>
-                    <th>Action</th>
+                    <th nowrap="">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -199,6 +199,7 @@
             $('.operation-datatable').DataTable( {
                 processing: true,
                 serverSide: true,
+                stateSave: true,
                 ajax: {
                     url: "{{ route('operation.liste', ['compte_bancaire_id' => $compteBancaire->id]) }}",
                     data :function ( d ) {
@@ -210,7 +211,7 @@
                 language: {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                 },
-                "order": [[ 0, "desc" ]],
+                "order": [[ 1, "desc" ]],
                 columnDefs: [
                     {
                         targets: 0,
@@ -259,6 +260,7 @@
                     },
                     {
                         targets: 6,
+                        orderable: false,
                         render: function (data, type, row, meta) {
                             let response = '';
                             row.documents.forEach((document) => {
@@ -269,6 +271,7 @@
                     },
                     {
                         targets: -1,
+                        orderable: false,
                         width: '60px',
                         render: function (data, type, row, meta) {
                             return '<a href="javascript:void(0)" data-id="' + row.id + '"  class="edit btn btn-success btn-sm" title="Editer"><i class="fas fa-pen"></i></a> <a href="javascript:void(0)" data-id="' + row.id + '" class="delete btn btn-danger btn-sm" title="Supprimer"><i class="fas fa-trash-alt"></i></a>';

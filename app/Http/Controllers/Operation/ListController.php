@@ -23,7 +23,34 @@ class ListController extends Controller
             return redirect(RouteServiceProvider::HOME);
         }
 
-        $requestOperation = Operation::where('compte_bancaire_id', $request->input('compte_bancaire_id'));
+        $requestOperation = Operation::with('documents', 'categorie', 'compteBancaire')->where('compte_bancaire_id', $request->input('compte_bancaire_id'));
+
+        $order   = $request->input( 'order',[]);
+        $columns = [
+            0 => [
+                'name' => 'id',
+            ],
+            1 => [
+                'name' => 'date_realisation',
+            ],
+            2 => [
+                'name' => 'designation',
+            ],
+            3 => [
+                'name' => 'debit',
+            ],
+            4 => [
+                'name' => 'credit',
+            ],
+            5 => [
+                'name' => 'categorie_id',
+            ],
+        ];
+        foreach ($order as $o) {
+            if(isset($columns[ $o[ 'column' ] ])) {
+                $requestOperation->orderBy($columns[ $o[ 'column' ] ][ 'name' ], $o[ 'dir' ]);
+            }
+        }
 
         switch($request->input('pointee','tous')) {
             case 'oui':
@@ -38,13 +65,15 @@ class ListController extends Controller
             case 'oui':
                 $requestOperation->whereIn('id', function($query){
                     $query->select('operation_id')
-                        ->from(with(new DocumentOperation())->getTable());
+                        ->from(with(new DocumentOperation())->getTable())
+                        ->whereNotNull('operation_id');
                 });
                 break;
             case 'non':
                 $requestOperation->whereNotIn('id', function($query){
                     $query->select('operation_id')
-                        ->from(with(new DocumentOperation())->getTable());
+                        ->from(with(new DocumentOperation())->getTable())
+                        ->whereNotNull('operation_id');
                 });
                 break;
         }
@@ -58,7 +87,7 @@ class ListController extends Controller
                 break;
         }
 
-        return Datatables::of($requestOperation->latest()->get())
+        return Datatables::eloquent($requestOperation)
             ->rawColumns(['action'])
             ->make(true);
 

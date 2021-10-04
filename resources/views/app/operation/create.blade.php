@@ -64,7 +64,7 @@
                                     <!-- checkbox -->
                                     <div class="form-group">
                                         <div class="form-check">
-                                            <input class="form-check-input" value="1" type="checkbox" id="pointe" name="pointe" {{ old('pointe', $pointe)===true ? ' checked' : '' }}>
+                                            <input class="form-check-input" value="1" type="checkbox" id="pointe" name="pointe" {{ ((bool) old('pointe'))===true ? ' checked' : '' }}>
                                             <label class="form-check-label" for="pointe">Pointé</label>
                                         </div>
                                     </div>
@@ -73,7 +73,7 @@
                                     <!-- checkbox -->
                                     <div class="form-group">
                                         <div class="form-check">
-                                            <input class="form-check-input" value="1" type="checkbox" id="sans_justificatif" name="sans_justificatif" {{ old('sans_justificatif', $sans_justificatif)===true ? ' checked' : '' }}>
+                                            <input class="form-check-input" value="1" type="checkbox" id="sans_justificatif" name="sans_justificatif" {{ ((bool) old('sans_justificatif'))===true ? ' checked' : '' }}>
                                             <label class="form-check-label" for="sans_justificatif">Sans justificatif</label>
                                         </div>
                                     </div>
