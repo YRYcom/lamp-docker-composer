@@ -39,7 +39,7 @@ class CreateOperationAndCategorie extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('operation');
-        Schema::dropIfExists('categorie');
+        Schema::dropIfExists('operations');
+        Schema::dropIfExists('categories');
     }
 }
