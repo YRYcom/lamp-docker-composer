@@ -22,8 +22,13 @@ class EditController extends Controller
             return redirect(RouteServiceProvider::HOME);
         }
 
+        $ids = [];
+        foreach ($operation->documents as $document){
+            $ids[] = $document->id;
+        }
+
         return view('app.operation.edit')
             ->with($operation->toArray())
-            ->with(['categories' => Categorie::all()]);
+            ->with(['categories' => Categorie::all(), 'ids' => $ids]);
     }
 }

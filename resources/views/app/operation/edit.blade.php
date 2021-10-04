@@ -14,52 +14,72 @@
                                 <form action="{{ route('operation.modifier') }}" method="POST" id="formUpdate">
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <input type="hidden" name="compte_bancaire_id" value="{{ $compte_bancaire->id }}">
-                                    <input type="hidden" id="documentoperations_id" name="documentoperations_id" value="{{ json_encode([]) }}">
+                                    <input type="hidden" id="documentoperations_id" name="documentoperations_id" value="{{ json_encode($ids) }}">
                                     @csrf
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="date_realisation">Date</label>
-                                        <input type="date" id="date_realisation" name="date_realisation" class="form-control" value="{{ old('date_realisation', $date_realisation) }}">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="date_realisation">Date</label>
+                                                <input type="date" id="date_realisation" name="date_realisation" class="form-control" value="{{ old('date_realisation', $date_realisation) }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="categorie_id">Catégorie</label>
+                                                <select name="categorie_id" id="categorie_id" class="form-control  custom-select @error('categorie_id') is-invalid @enderror">
+                                                    <option disabled="">Choisissez une valeur</option>
+                                                    @foreach($categories as $categorie)
+                                                        <option value="{{ $categorie->id }}" {{ old('categorie_id', $categorie_id) == $categorie->id ? ' selected=""' : '' }}>{{ $categorie->designation }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('categorie_id')
+                                                <span class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="categorie_id">Catégorie</label>
-                                        <select name="categorie_id" id="categorie_id" class="form-control  custom-select @error('categorie_id') is-invalid @enderror">
-                                            <option disabled="">Choisissez une valeur</option>
-                                            @foreach($categories as $categorie)
-                                                <option value="{{ $categorie->id }}" {{ old('categorie_id', $categorie_id) == $categorie->id ? ' selected=""' : '' }}>{{ $categorie->designation }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('categorie_id')
+                                        <label for="designation">Désignation</label>
+                                        <input type="text" id="designation" name="designation" class="form-control @error('designation') is-invalid @enderror"  value="{{ old('designation', $designation) }}">
+                                        @error('designation')
                                         <span class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="designation">Désignation</label>
-                                <input type="text" id="designation" name="designation" class="form-control @error('designation') is-invalid @enderror"  value="{{ old('designation', $designation) }}">
-                                @error('designation')
-                                <span class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="debit">Débit</label>
-                                        <input type="text" id="debit" name="debit" class="form-control"  value="{{ old('debit', $debit) }}">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="debit">Débit</label>
+                                                <input type="text" id="debit" name="debit" class="form-control"  value="{{ old('debit', $debit) }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="credit">Crédit</label>
+                                                <input type="text" id="credit" name="credit" class="form-control"  value="{{ old('credit', $credit) }}">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="credit">Crédit</label>
-                                        <input type="text" id="credit" name="credit" class="form-control"  value="{{ old('credit', $credit) }}">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <!-- checkbox -->
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" value="1" type="checkbox" id="pointe" name="pointe" {{ ((bool) old('pointe', $pointe))===true ? ' checked' : '' }}>
+                                                    <label class="form-check-label" for="pointe">Pointé</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <!-- checkbox -->
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" value="1" type="checkbox" id="sans_justificatif" name="sans_justificatif" {{ ((bool) old('sans_justificatif', $pointe))===true ? ' checked' : '' }}>
+                                                    <label class="form-check-label" for="sans_justificatif">Sans justificatif</label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-            </form>
+                                </form>
                             <div class="form-group">
                                 <label for="designation">Fichiers</label>
                                 <div class="dropzone" id="file-dropzone"></div>
@@ -133,16 +153,22 @@
                         dataType: 'json',
                         success: function(data){
                             $.each(data, function (key, value) {
-                                let file = {name: value.name, size: value.size};
+                                let file = {name: value.name, size: value.size, serverId: value.id};
+
+                                var anchorEl = document.createElement('a');
+                                anchorEl.setAttribute('class','dz-remove');
+                                anchorEl.setAttribute('href',urlTelecharger.replace('idDocument', value.id));
+                                anchorEl.setAttribute('target','_blank');
+                                anchorEl.innerHTML = "Télécharger";
+
                                 myDropzone.options.addedfile.call(myDropzone, file);
-                                myDropzone.options.thumbnail.call(myDropzone, file, value.path);
+                                file.previewTemplate.appendChild(anchorEl);
                                 myDropzone.emit("complete", file);
                             });
                         }
                     });
                 },
                 removedfile: function (file) {
-                    var name = file.upload.filename;
                     $.ajax({
                         type: 'POST',
                         url: '{{route('documentoperation.supprimer')}}',
@@ -153,7 +179,7 @@
                             $('#documentoperations_id').val(JSON.stringify(ids));
                         }
                     });
-                    var fileRef;
+                    let fileRef;
                     return (fileRef = file.previewElement) != null ?
                         fileRef.parentNode.removeChild(file.previewElement) : void 0;
                 },

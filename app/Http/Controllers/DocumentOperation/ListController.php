@@ -2,42 +2,35 @@
 
 namespace App\Http\Controllers\DocumentOperation;
 
+use App\Models\CompteBancaire;
 use App\Models\DocumentOperation;
 use App\Models\Operation;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ListController
 {
     public function __invoke(Request $request)
     {
+        /** @var Operation $operation */
+        $operation = Operation::find($request->input('operation_id'));
+
+        $compteBancaire = auth()->user()->compteBancaires->where('id', $operation->compteBancaire->id)->first();
+        if (!($compteBancaire instanceof CompteBancaire)) {
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $json = [];
-        foreach (Operation::find($request->input('operation_id'))->documentoperation as $document) {
+        foreach ($operation->documents as $document) {
             $object = [];
-            $object['name'] = $file;
-            $file_path = public_path('uploads/gallery/').$file;
-            $object['size'] = filesize($file_path);
-            $object['path'] = url('public/uploads/gallery/'.$file);
+            $object['id'] = $document->id;
+            $object['name'] = $document->original_filename;
+            $object['size'] = Storage::disk('documentoperation')->size($document->filename);
+            $object['path'] = route('documentoperation.telecharger', ['id' => $document->id]);
             $json[] = $object;
         }
         return response()->json($json);
 
-        $images = Gallery::all()->toArray();
-        foreach($images as $image){
-            $tableImages[] = $image['filename'];
-        }
-        $storeFolder = public_path('uploads/gallery');
-        $file_path = public_path('uploads/gallery/');
-        $files = scandir($storeFolder);
-        foreach ( $files as $file ) {
-            if ($file !='.' && $file !='..' && in_array($file,$tableImages)) {
-                $obj['name'] = $file;
-                $file_path = public_path('uploads/gallery/').$file;
-                $obj['size'] = filesize($file_path);
-                $obj['path'] = url('public/uploads/gallery/'.$file);
-                $data[] = $obj;
-            }
-
-        }
-        return response()->json($data);
     }
 }

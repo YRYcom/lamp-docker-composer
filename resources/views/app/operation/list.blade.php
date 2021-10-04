@@ -120,6 +120,7 @@
         $(document).ready(function() {
             let urlSupprimer = '{{ route('operation.supprimer', ['id' => 'idOperation']) }}';
             let urlEditer= '{{ route('operation.editer', ['id' => 'idOperation']) }}';
+            let urlTelecharger = '{{ route('documentoperation.telecharger', ['id' => 'idDocumentOperation']) }}';
 
             $('.exporter').on('click', function(e) {
                let url = "{{ route('operationexport.creer', ['compte_bancaire_id' => $compteBancaire->id]) }}";
@@ -259,7 +260,11 @@
                     {
                         targets: 6,
                         render: function (data, type, row, meta) {
-                            return '&nbsp;';
+                            let response = '';
+                            row.documents.forEach((document) => {
+                                response = response + '<a target="_blank" href="'+urlTelecharger.replace('idDocumentOperation', document.id)+'">' + document.original_filename + '</a><br/>';
+                            })
+                            return response;
                         }
                     },
                     {

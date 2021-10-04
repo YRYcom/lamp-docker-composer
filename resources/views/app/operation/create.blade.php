@@ -59,6 +59,26 @@
                                 </div>
                             </div>
                         </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <!-- checkbox -->
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" value="1" type="checkbox" id="pointe" name="pointe" {{ old('pointe', $pointe)===true ? ' checked' : '' }}>
+                                            <label class="form-check-label" for="pointe">Pointé</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <!-- checkbox -->
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" value="1" type="checkbox" id="sans_justificatif" name="sans_justificatif" {{ old('sans_justificatif', $sans_justificatif)===true ? ' checked' : '' }}>
+                                            <label class="form-check-label" for="sans_justificatif">Sans justificatif</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
         </form>
                         <div class="form-group">
                             <label for="designation">Fichiers</label>

@@ -25,6 +25,16 @@ class DocumentOperation extends Model
         'operation_id',
     ];
 
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'original_filename' => $this->original_filename,
+            'filename' => $this->filename,
+            'operation_id' => $this->operation_id,
+        ];
+    }
+
     /**
      * @return BelongsTo
      */
