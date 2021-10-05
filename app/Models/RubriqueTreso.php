@@ -54,10 +54,6 @@ class RubriqueTreso extends Model
         $montant = $query->selectRaw("SUM(IFNULL(credit, 0)) - SUM(IFNULL(debit, 0)) as montant")
                 ->first()['montant'] ?? 0;
 
-        if($this->type = self::TYPE_DEPENSE) {
-            return $montant * -1;
-        }
-
         return $montant;
     }
 

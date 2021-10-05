@@ -56,7 +56,7 @@
         </td>
     </tr>
     @foreach($recettes as $recette)
-        <tr>
+        <tr data-toggle="collapse" data-target=".collapse-{{ $recette->id }}" aria-expanded="false">
             <td>
                 {{$recette->designation}}
             </td>
@@ -75,6 +75,27 @@
                 {{ monetaire($recette->getMontant($annee) + $recette->getMontantAttente($annee) ) }}
             </td>
         </tr>
+        @foreach($recette->categories as $categorie)
+            <tr class="collapse collapse-id collapse-{{ $recette->id }}">
+                <td class="text-right">
+                    {{$categorie->designation}}
+                </td>
+                @for($mois=1; $mois <=12; $mois++)
+                    <td class="text-right">
+                        {{ monetaire(($categorie->getMontant($annee, $mois)  ) )}}
+                    </td>
+                @endfor
+                <td class="text-right">
+                    {{ monetaire(($categorie->getMontant($annee)  ) ) }}
+                </td>
+                <td class="text-right">
+                    {{ monetaire(($categorie->getMontantAttente($annee)   ))  }}
+                </td>
+                <td class="text-right">
+                    {{ monetaire(((($categorie->getMontant($annee) + $categorie->getMontantAttente($annee)))  ) )  }}
+                </td>
+            </tr>
+        @endforeach
     @endforeach
     <tr>
         <td class="font-weight-bold" >
@@ -112,17 +133,17 @@
             </td>
             @for($mois=1; $mois <=12; $mois++)
                 <td class="text-right">
-                    {{ monetaire($depense->getMontant($annee, $mois) )}}
+                    {{ monetaire($depense->getMontant($annee, $mois) * -1 )}}
                 </td>
             @endfor
             <td class="text-right">
-                {{ monetaire($depense->getMontant($annee) ) }}
+                {{ monetaire($depense->getMontant($annee) * -1 ) }}
             </td>
             <td class="text-right">
-                {{ monetaire($depense->getMontantAttente($annee) ) }}
+                {{ monetaire($depense->getMontantAttente($annee) * -1 ) }}
             </td>
             <td class="text-right">
-                {{ monetaire(($depense->getMontant($annee) + $depense->getMontantAttente($annee)) )  }}
+                {{ monetaire(($depense->getMontant($annee) + $depense->getMontantAttente($annee)) * -1 )  }}
             </td>
         </tr>
         @foreach($depense->categories as $categorie)
@@ -153,17 +174,17 @@
         </td>
         @for($mois=1; $mois <=12; $mois++)
             <td class="text-right">
-                {{ monetaire($depenses->getMontant($annee, $mois) ) }}
+                {{ monetaire($depenses->getMontant($annee, $mois) * -1 ) }}
             </td>
         @endfor
         <td class="text-right">
-            {{ monetaire($depenses->getMontant($annee) ) }}
+            {{ monetaire($depenses->getMontant($annee) * -1 ) }}
         </td>
         <td class="text-right">
-            {{ monetaire($depenses->getMontantAttente($annee) ) }}
+            {{ monetaire($depenses->getMontantAttente($annee) * -1 ) }}
         </td>
         <td class="text-right">
-            {{ monetaire(($depenses->getMontant($annee) + $depenses->getMontantAttente($annee)) ) }}
+            {{ monetaire(($depenses->getMontant($annee) + $depenses->getMontantAttente($annee)) * -1 ) }}
         </td>
     </tr>
     <tr>
@@ -177,17 +198,17 @@
         </td>
         @for($mois=1; $mois <=12; $mois++)
             <td class="text-right">
-                {{ monetaire(($recettes->getMontant($annee, $mois) - $depenses->getMontant($annee, $mois)) ) }}
+                {{ monetaire(($recettes->getMontant($annee, $mois) + $depenses->getMontant($annee, $mois)) ) }}
             </td>
         @endfor
         <td class="text-right">
-            {{ monetaire(($recettes->getMontant($annee) - $depenses->getMontant($annee)) ) }}
+            {{ monetaire(($recettes->getMontant($annee) + $depenses->getMontant($annee)) ) }}
         </td>
         <td class="text-right">
-            {{ monetaire(($recettes->getMontantAttente($annee) - $depenses->getMontantAttente($annee)) ) }}
+            {{ monetaire(($recettes->getMontantAttente($annee) + $depenses->getMontantAttente($annee)) ) }}
         </td>
         <td class="text-right">
-            {{ monetaire(($recettes->getMontant($annee) + $recettes->getMontantAttente($annee) - $depenses->getMontant($annee) - $depenses->getMontantAttente($annee)) ) }}
+            {{ monetaire(($recettes->getMontant($annee) + $recettes->getMontantAttente($annee) + $depenses->getMontant($annee) + $depenses->getMontantAttente($annee)) ) }}
         </td>
     </tr>
 </table>
