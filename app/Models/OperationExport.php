@@ -18,7 +18,7 @@ class OperationExport extends Model
     use HasFactory;
 
     public function setDefaultDesignation() {
-        $this->designation = 'Export éxécuté le ' . date('H/i/s d/m/Y');
+        $this->designation = 'Export éxécuté le ' . date('d/m/Y à H:i:s ');
         return $this;
     }
 
