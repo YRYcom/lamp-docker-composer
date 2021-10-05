@@ -45,4 +45,23 @@ class CompteBancaire  extends Model
             +Operation::where('pointe',1)->sum('credit')
             -Operation::where('pointe',1)->sum('debit');
     }
+
+    public function soldeDebutMois($annee, $mois)
+    {
+        $arret = SoldeCompteBancaire::getLast($this, $annee, $mois);
+
+        if(is_null($arret)) {
+            return 0;
+        }
+
+        return $arret->montant
+            + Operation::where('pointe',1)
+                ->whereDate('date_realisation', '>', $arret?->date_arret ?? '0000-00-00')
+                ->whereDate('date_realisation', '<', \DateTime::createFromFormat('Y-m-d', $annee.'-'.$mois.'-01'))
+                ->sum('credit')
+            - Operation::where('pointe',1)
+                ->whereDate('date_realisation', '>', $arret?->date_arret ?? '0000-00-00')
+                ->whereDate('date_realisation', '<', \DateTime::createFromFormat('Y-m-d', $annee.'-'.$mois.'-01'))
+                ->sum('debit');
+    }
 }

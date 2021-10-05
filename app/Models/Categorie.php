@@ -31,4 +31,32 @@ class Categorie extends Model
     {
         return $this->belongsTo(RubriqueTreso::class);
     }
+
+    public function getAllMontant($annee, $mois=null, $pointe=null)
+    {
+        $query = Operation::where('categorie_id', $this->id)
+            ->whereYear('date_realisation',(int) $annee);
+
+        if(!is_null($pointe)) {
+            $query->where('pointe', 1);
+        }
+
+        if(!is_null($mois)) {
+            $query->whereMonth('date_realisation',(int) $mois);
+        }
+
+        return $query->selectRaw("SUM(IFNULL(credit, 0)) - SUM(IFNULL(debit, 0)) as montant")
+                ->first()['montant'] ?? 0;
+    }
+
+    public function getMontant($annee, $mois=null)
+    {
+        return $this->getAllMontant($annee, $mois, 1);
+    }
+
+    public function getMontantAttente($annee, $mois=null)
+    {
+        return $this->getAllMontant($annee, $mois, 0);
+    }
+
 }

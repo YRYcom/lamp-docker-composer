@@ -39,6 +39,9 @@
             "Tests\\": "tests/"
         }
     },
+    "files": [
+        "app/helpers.php"
+    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

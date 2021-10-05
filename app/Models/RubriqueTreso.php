@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class RubriqueTreso
  * @property int $id
  * @property int $designation
+ * @property int $compte_bancaire_id
  * @property string $type
  * @property-read Categorie[] $categories
  */
@@ -22,12 +23,9 @@ class RubriqueTreso extends Model
 
     public $usesUsers = true;
 
-    /**
-     * @return BelongsTo
-     */
-    public function categories(): BelongsTo
+    public function categories()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->hasMany(Categorie::class);
     }
 
     public function scopeIsRecetteType($query)
@@ -40,14 +38,37 @@ class RubriqueTreso extends Model
         $query->where('type',self::TYPE_DEPENSE);
     }
 
+    public function getAllMontant($annee, $mois=null, $pointe=null)
+    {
+        $query = Operation::whereIn('categorie_id', ($this->categories?->pluck('id') ?? []))
+            ->whereYear('date_realisation',(int) $annee);
+
+        if(!is_null($pointe)) {
+            $query->where('pointe', 1);
+        }
+
+        if(!is_null($mois)) {
+            $query->whereMonth('date_realisation',(int) $mois);
+        }
+
+        $montant = $query->selectRaw("SUM(IFNULL(credit, 0)) - SUM(IFNULL(debit, 0)) as montant")
+                ->first()['montant'] ?? 0;
+
+        if($this->type = self::TYPE_DEPENSE) {
+            return $montant * -1;
+        }
+
+        return $montant;
+    }
+
     public function getMontant($annee, $mois=null)
     {
-        return 0;
+        return $this->getAllMontant($annee, $mois, 1);
     }
 
     public function getMontantAttente($annee, $mois=null)
     {
-        return 0;
+        return $this->getAllMontant($annee, $mois, 0);
     }
 
     public function newCollection(array $models = [])

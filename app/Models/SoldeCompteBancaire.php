@@ -14,10 +14,20 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SoldeCompteBancaire extends Model
 {
-    public static function getLastMontant(CompteBancaire $compteBancaire)
+    public static function getLast(CompteBancaire $compteBancaire, $annee = null, $mois = null)
     {
-        $lastSolde = self::where('compte_bancaire_id', $compteBancaire->id)->orderBy('date_arret', 'DESC')->latest()->first();
+        $lastSolde = self::where('compte_bancaire_id', $compteBancaire->id);
 
-        return $lastSolde?->montant ?? 0;
+        if(!is_null($annee)) {
+            $lastSolde->whereDate('date_arret', '<' , $annee.'-' . ( $mois ?? '01' ) . '-01');
+        }
+
+        return $lastSolde->orderBy('date_arret', 'DESC')
+            ->first();
+
+    }
+
+    public static function getLastMontant(CompteBancaire $compteBancaire) {
+        return self::getLast($compteBancaire)->montant;
     }
 }
