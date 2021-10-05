@@ -87,16 +87,25 @@
                     </div>
                     <nav class="mt-2">
                         @foreach(auth()->user()->compteBancaires->where('entreprise_id', $entreprise->id) as $compteBancaire)
+
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                            <li class="user-panel pl-2 border-bottom-0">
+                                <div class="info">
+                                        <i class="nav-icon fas fa-list mr-2"></i>
+                                        {{ $compteBancaire->designation }}
+                                </div>
+                            </li>
                             <li class="nav-item">
-                                <a href="{{ route('operation', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link">
-                                    <i class="nav-icon fas fa-list"></i>
+                                <a href="{{ route('operation', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link pl-4">
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>
-                                        {{$compteBancaire->designation}}
+                                        Opérations
                                     </p>
                                 </a>
-                                <a href="{{ route('rapport.tresorerie', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link">
-                                    <i class="nav-icon fas fa-list"></i>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('rapport.tresorerie', ['compte_bancaire_id'=>$compteBancaire->id]) }}" class="nav-link pl-4">
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>
                                         Trésorerie
                                     </p>

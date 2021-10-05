@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int $sans_justificatif
  * @property int $categorie_id
  * @property  int $compte_bancaire_id
+ * @property int $operation_export_id
  * @property-read Categorie $categorie
  * @property-read CompteBancaire $compteBancaire
  * @property-read DocumentOperation[] $documents
@@ -40,6 +41,7 @@ class Operation extends Model
         'sans_justificatif',
         'user_id',
         'compte_bancaire_id',
+        'operation_export_id',
     ];
 
     public function toArray() {

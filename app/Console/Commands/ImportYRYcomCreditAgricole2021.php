@@ -5,6 +5,7 @@ use App\Models\CompteBancaire;
 use App\Models\DocumentOperation;
 use App\Models\Entreprise;
 use App\Models\Operation;
+use App\Models\OperationExport;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +59,13 @@ class ImportYRYcomCreditAgricole2021 extends Command
                 $data[4] .= '.pdf';
             }
 
+            $export = new OperationExport([
+                'compte_bancaire_id' => $compteBancaire->id,
+                'created_by' => $user->id,
+            ]);
+            $export->setDefaultDesignation();
+            $export->save();
+
             $operation = new Operation([
                 'designation' => $data[1],
                 'categorie_id' => $data[5],
@@ -68,6 +76,7 @@ class ImportYRYcomCreditAgricole2021 extends Command
                 'sans_justificatif' => $data[4] == '-' ? 1 : 0,
                 'user_id' => $user->id,
                 'compte_bancaire_id' => $compteBancaire->id,
+                'operation_export_id' => $export->id,
             ]);
             $operation->save();
 
